@@ -178,11 +178,13 @@ class RequestLog extends Model implements RequestLoggerInterface
         return $this->replaceParameters($data, RequestLoggerFacade::getFilters());
     }
 
-    protected function replaceParameters(array $array, array $hidden, string $value = '********'): array
+    protected function replaceParameters(array $array, array $filters, string $maskChar = '*'): array
     {
-        foreach ($hidden as $parameter) {
-            if (Arr::get($array, $parameter)) {
-                Arr::set($array, $parameter, '********');
+        foreach ($filters as $param) {
+            foreach ([$param, mb_strtolower($param)] as $key) {
+                if ($value = Arr::get($array, $key)) {
+                    Arr::set($array, $key, str_repeat($maskChar, mb_strlen($value)));
+                }
             }
         }
 
