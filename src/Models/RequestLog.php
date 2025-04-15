@@ -180,18 +180,7 @@ class RequestLog extends Model implements RequestLoggerInterface
 
     protected function replaceParameters(array $array, array $hidden, string $value = '*'): array
     {
-        foreach ($hidden as $param) {
-            foreach ([$param, mb_strtolower($param)] as $key) {
-                if ($origValue = Arr::get($array, $key)) {
-                    Arr::set($array, $key, strlen($value) === 1
-                        ? str_repeat($value, mb_strlen($origValue))
-                        : $value
-                    );
-                }
-            }
-        }
-
-        return $array;
+        return Arr::maskCaseInsensitive($array, $hidden, $value);
     }
 
     protected function truncateToLength(?string $string, int $length = 255): ?string
